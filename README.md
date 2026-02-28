@@ -5,7 +5,7 @@ Sistema de gerenciamento de tarefas com autenticação
 ## Tecnologias
 - Frontend: React + Vite
 - Backend: Node.js + Express
-- Database: PostgreSQL
+- Database: SQLITE
 
 ## Estrutura do Projeto
 ```
