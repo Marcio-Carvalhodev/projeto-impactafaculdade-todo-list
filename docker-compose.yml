@@ -1,0 +1,21 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      - JWT_SECRET=todo_app_secret_key_change_in_production
+      - PORT=3000
+      - DB_PATH=/app/data/database.sqlite
+      - FRONTEND_URL=http://localhost:5173
+    volumes:
+      - ./data:/app/data
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_TARGET=http://backend:3000
+    depends_on:
+      - backend
