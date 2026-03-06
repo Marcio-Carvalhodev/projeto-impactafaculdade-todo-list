@@ -1,19 +1,26 @@
-const db = require('../config/database');
+const pool = require('../config/database');
 
 const userRepository = {
-  findByEmail(email) {
-    return db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+  async findByEmail(email) {
+    const { rows } = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    return rows[0] || null;
   },
 
-  findById(id) {
-    return db.prepare('SELECT id, name, email, created_at FROM users WHERE id = ?').get(id);
+  async findById(id) {
+    const { rows } = await pool.query(
+      'SELECT id, name, email, created_at FROM users WHERE id = $1',
+      [id],
+    );
+    return rows[0] || null;
   },
 
-  create({ name, email, password }) {
-    const result = db
-      .prepare('INSERT INTO users (name, email, password) VALUES (?, ?, ?)')
-      .run(name, email, password);
-    return { id: result.lastInsertRowid, name, email };
+  async create({ name, email, password }) {
+    const { rows } = await pool.query(
+      'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email',
+      [name, email, password],
+    );
+    console.log(`Usuario ${name}, criado com sucesso`)
+    return rows[0];
   },
 };
 

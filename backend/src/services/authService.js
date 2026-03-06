@@ -8,13 +8,13 @@ const authService = {
       throw Object.assign(new Error('Todos os campos são obrigatórios'), { status: 400 });
     }
 
-    const existing = userRepository.findByEmail(email);
+    const existing = await userRepository.findByEmail(email);
     if (existing) {
       throw Object.assign(new Error('Email já cadastrado'), { status: 409 });
     }
 
     const hashed = await bcrypt.hash(password, 10);
-    const user = userRepository.create({ name, email, password: hashed });
+    const user = await userRepository.create({ name, email, password: hashed });
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     return { user, token };
@@ -25,7 +25,7 @@ const authService = {
       throw Object.assign(new Error('Email e senha são obrigatórios'), { status: 400 });
     }
 
-    const user = userRepository.findByEmail(email);
+    const user = await userRepository.findByEmail(email);
     if (!user) {
       throw Object.assign(new Error('Credenciais inválidas'), { status: 401 });
     }

@@ -1,4 +1,18 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: todolist
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   backend:
     build: ./backend
     ports:
@@ -6,10 +20,11 @@ services:
     environment:
       - JWT_SECRET=todo_app_secret_key_change_in_production
       - PORT=3000
-      - DB_PATH=/app/data/database.sqlite
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/todolist
       - FRONTEND_URL=http://localhost:5173
-    volumes:
-      - ./data:/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   frontend:
     build: ./frontend
@@ -19,3 +34,6 @@ services:
       - VITE_API_TARGET=http://backend:3000
     depends_on:
       - backend
+
+volumes:
+  postgres_data:
