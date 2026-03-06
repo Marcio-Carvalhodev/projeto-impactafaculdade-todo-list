@@ -16,12 +16,12 @@ const taskService = {
     });
   },
 
-  update(id, userId, data) {
+  async update(id, userId, data) {
     if (data.title !== undefined && !data.title.trim()) {
       throw Object.assign(new Error('Título não pode ser vazio'), { status: 400 });
     }
 
-    const task = taskRepository.update(Number(id), userId, {
+    const task = await taskRepository.update(Number(id), userId, {
       ...data,
       title: data.title?.trim(),
     });
@@ -33,8 +33,8 @@ const taskService = {
     return task;
   },
 
-  delete(id, userId) {
-    const deleted = taskRepository.remove(Number(id), userId);
+  async delete(id, userId) {
+    const deleted = await taskRepository.remove(Number(id), userId);
     if (!deleted) {
       throw Object.assign(new Error('Tarefa não encontrada'), { status: 404 });
     }
