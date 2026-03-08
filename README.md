@@ -12,6 +12,7 @@ Sistema de gerenciamento de tarefas com autenticação
 ## Estrutura do Projeto
 
 ```
+
 projeto-todo-list/
 ├── backend/
 │   ├── src/
